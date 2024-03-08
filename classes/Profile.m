@@ -45,6 +45,8 @@ classdef Profile < Survey
             
             % Get base class properties
             obj = obj@Survey(config);% Get base class properties
+            % Include lineNumber property
+            obj.lineNumber = ones([1, obj.numFiles]);
         end
         
         function obj = processProfile(obj,config)
@@ -430,10 +432,10 @@ classdef Profile < Survey
             
             disp('Profile processing method: Interpolation')
     
+            % Find number of individual lines. 
             datKeys = unique(obj.lineNumber);
             sarKeys = unique(obj.profileLine);
             nLines = numel(datKeys);
-    
     
             imgOrg = abs(obj.specCor);
             obj.imgProc = zeros([obj.profileSize(1,1) sum(obj.profileSize(:,2))]);
