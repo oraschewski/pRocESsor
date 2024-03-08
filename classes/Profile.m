@@ -238,13 +238,18 @@ classdef Profile < Survey
                         z = interp1(obj.distFit, lnPosOrg(3,indindSF), obj.profileDist,'linear');
                         
                         profilePosNew = [x; y; z];
-                        obj.profilePos = [obj.profilePos, profilePosNew];
-                        obj.profileLine = [obj.profileLine, ones(1, length(profilePosNew)) * datKeys(n)];
-                        obj.profileSize = [obj.profileSize; [length(obj.range), length(profilePosNew)]];
+                        if n==1
+                            obj.profilePos = profilePosNew;
+                            obj.profileLine = ones(1, length(profilePosNew)) * datKeys(n);
+                            obj.profileSize = [length(obj.range), length(profilePosNew)];
+                        else
+                            obj.profilePos = [obj.profilePos, profilePosNew];
+                            obj.profileLine = [obj.profileLine, ones(1, length(profilePosNew)) * datKeys(n)];
+                            obj.profileSize = [obj.profileSize; [length(obj.range), length(profilePosNew)]];
+                        end
                     end
                 otherwise
-                    error(['positionProfile: positioning method "' cfg.methodSAR '" is unknown.']);
-                    %error([mfilename ': positioning method "' cfg.methodPos '" is unknown.']);
+                    error(['positionProfile: positioning method "' obj.config.methodPos '" is unknown.']);
             end
         end
 
