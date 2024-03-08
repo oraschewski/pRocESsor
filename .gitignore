@@ -1,0 +1,6 @@
+# List of untracked files to ignore
+
+config_archive
+
+*.asv
+*.prj
