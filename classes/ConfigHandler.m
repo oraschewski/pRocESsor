@@ -25,7 +25,7 @@ classdef ConfigHandler
         % Update settings
         newPreProc = false; % Flag indicating to (re-processed data
         newPos = false;     % Flag indicating new position data
-        newSlopes = false;  % Flag indicating new slope data
+        newSlopes = true;  % Flag indicating new slope data
         newProc = false;    % Flag indicating new output data
         
         % Default pRES settings
