@@ -11,8 +11,8 @@ classdef ConfigHandler
         dirProject  % Root project directory
         
         dirRaw      % Directory for raw/input files
-        dirPreProc  % Directory for processed (intermediate) data
-        dirProc     % Output directory
+        dirPreProc  % Directory for pre-processed pRES data
+        dirProc     % Directory for processed output
         dirGPS      % Directory for GPS files
         dirSup      % Directory for supplementary inputs
         

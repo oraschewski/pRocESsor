@@ -30,7 +30,7 @@ cfg.fileDensity = 'densityKCC_LinearlyExtrapolated.csv'; % Density data (current
 
 % File update settings
 cfg.newPreProc  = false; % Option to update cfg.filePreProc
-cfg.newPos      = true; % Option to update cfg.filePos
+cfg.newPos      = false; % Option to update cfg.filePos
 cfg.newSlopes   = true;
 cfg.newProc     = true; % Option to update cfg.fileProc
 

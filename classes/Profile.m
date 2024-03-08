@@ -88,11 +88,11 @@ classdef Profile < Survey
             end
 
 
-            if config.newOutput || ~isfile(config.fileOutput)
+            if config.newProc || ~isfile(config.fileProc)
                 obj = obj.processSAR();
-                obj.saveSurvey(config.fileOutput)
+                obj.saveSurvey(config.fileProc)
             else
-                obj = obj.loadSurvey(config.fileOutput);
+                obj = obj.loadSurvey(config.fileProc);
             end
         end
 
@@ -699,7 +699,7 @@ classdef Profile < Survey
                 nSave = nSave + 1;                
                 if nSave == 100
                     obj.imgSlope(:,indSAR) = imgSlopeSAR;
-                    obj.saveSurvey(obj.config.fileOutput);
+                    obj.saveSurvey(obj.config.fileProc);
                     nSave = 0;
                 end
                 disp(['Layer-optimized SAR processing, trace: ' num2str(m) '/' num2str(numel(mRange))]);
