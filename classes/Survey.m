@@ -71,9 +71,9 @@ classdef Survey
             
             % Check if a file for the pre-processed survey data already
             % exsist exists and shall not be overwritten.
-            if ~config.newPreProc && exist(config.fileProc, 'file') == 2
+            if ~config.newPreProc && exist(config.filePreProc, 'file') == 2
                 % Load existing Survey object.
-                pRESdata = load(config.fileProc,'-mat');
+                pRESdata = load(config.filePreProc,'-mat');
 
                 % Unfold survey object.
                 obj = pRESdata.pRESdata;
@@ -104,7 +104,7 @@ classdef Survey
                 % Update config field
                 pRESdata.config = cs;
                 % Save survey object
-                save(config.fileProc,'pRESdata');
+                save(config.filePreProc,'pRESdata');
                 clear pRESdata
             end
         end
