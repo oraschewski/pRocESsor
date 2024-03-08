@@ -26,6 +26,7 @@ classdef Profile < Survey
         imgSlopeFiltered double
 
         dist
+        lineNumber
 
         imgProc double
         imgProcIncoherent double
