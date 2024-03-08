@@ -457,7 +457,7 @@ classdef Survey
 
         function saveSurvey(obj, filename)
             cs = obj.config;
-            [cs.dirProject, cs.dirRaw, cs.dirProc, cs.dirOutput, cs.dirGPS, cs.dirSup, cs.fileProc, cs.fileOutput, cs.filePos, cs.fileGPS, cs.fileDensity] = deal([]);
+            [cs.dirProject, cs.dirRaw, cs.dirPreProc, cs.dirProc, cs.dirGPS, cs.dirSup, cs.filePreProc, cs.fileProc, cs.filePos, cs.fileGPS, cs.fileDensity] = deal([]);
 
             pRESdata = obj;
             pRESdata.config = cs;
