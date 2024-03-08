@@ -1,9 +1,9 @@
-function cfg = config_T1_losar()
+function cfg = config_T1_raw()
 % Configuration file for pRocESsor.
 %
 % Mobile pRES profile
 % Transect 1, 2021 Colle Gnifetti campaign, Uni Tübingen
-% Processing: Layer-optimized SAR
+% Processing: Interpolation -> Data are only rescaled to equidistant grid.
 %
 % Falk Oraschewski, 01.08.2023
 
@@ -22,7 +22,7 @@ cfg.dirGPS      = 'data/raw_data/gps';          % Subpath to GPS data
 cfg.dirSup      = 'data/supplement_data';       % Subpath to any supplementary data
 
 % Filenames
-cfg.fileProc    = 'T1_LOSAR_filtered.mat';      % Processed output data file
+cfg.fileProc    = 'T1_raw.mat';                 % Processed output data file
 cfg.filePreProc = 'T1_p8_md100.mat';            % Pre-processed data file (after fmcw_range is applied).
 cfg.filePos     = 'T1_pos_smooth.mat';          % Pre-processed positioning data file
 cfg.fileGPS     = 'gpsAll.csv';                 % Input file for GPS data (currently only .csv files are supported with the fields 'filename', 'latitude', 'longitude' and 'elevation').
@@ -32,7 +32,7 @@ cfg.fileDensity = 'densityKCC_LinearlyExtrapolated.csv'; % Density data (current
 cfg.newPreProc  = false; % Option to update cfg.filePreProc
 cfg.newPos      = false; % Option to update cfg.filePos
 cfg.newProc     = true; % Option to update cfg.fileProc
-cfg.newSlopes   = true; % Option to avoid reprocessing the slope
+cfg.newSlopes   = false; % Option to avoid reprocessing the slope
 
 
 %% Processing settings
@@ -43,7 +43,7 @@ cfg.correctDensity  = true;  % Option to correct for density
 cfg.matchShape      = false; % Option to apply a shape matching filter (following Rahman et al., 2014)
 
 % Survey type specific
-cfg.methodSAR       = 'losar';      % Options: 'losar', 'interpolation', 'movmean'
+cfg.methodSAR       = 'interpolation';      % Options: 'losar', 'interpolation', 'movmean'
 cfg.lengthSAR       = 5;            % Synthetic aperture length (m)
 cfg.methodPos       = 'smooth';     % Position processing method; Options: 'smooth', 'org'
 cfg.methodSlope     = 'linefit';    % Slope estimation methods; options: 'linefit', 'compute' 
