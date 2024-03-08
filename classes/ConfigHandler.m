@@ -74,8 +74,6 @@ classdef ConfigHandler
         profileSpacing      % Profile spacing
         useAntennaPos       % Flag indicating usage of antenna position
         
-        plotProcessing = false; % Flag indicating whether to plot processing
-        
         defineLines         % Definition of lines
         numLines            % Number of lines
         indLines            % Indices of lines

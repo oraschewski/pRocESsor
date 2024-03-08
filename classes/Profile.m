@@ -257,7 +257,7 @@ classdef Profile < Survey
         function obj = processSAR(obj)
             %PROCESSSAR
             switch lower(obj.config.methodSAR) % Make survey types case insensitive.
-                case 'layer'
+                case 'losar'
                     obj = obj.losar();
                 case 'backprojection'
                     obj = obj.backprojection();
@@ -292,12 +292,12 @@ classdef Profile < Survey
                 %%%%%%%%%%%%%% Find layer slopes from phase %%%%%%%%%%%%%%%
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          
 
-                if obj.config.newSlopes || ~isfile(obj.config.fileOutput)
+                if obj.config.newSlopes || ~isfile(obj.config.fileProc)
                     % Obtain slopes using one of the implemented methods
                     switch lower(obj.config.methodSlope)
                         case 'compute'
                             obj = obj.slopeCompute(k);
-                        case 'linefitting'
+                        case 'linefit'
                             obj = obj.slopeLineFitting(k);
                         case 'radon'
                             %ToDo: Include finding the slope using the radon transform
@@ -305,10 +305,10 @@ classdef Profile < Survey
                             error(['losar: Slope finding method "' obj.config.methodSlope '" is unknown.']);
                     end
                     % Save survey with updated slopes
-                    obj.saveSurvey(obj.config.fileOutput)
+                    obj.saveSurvey(obj.config.fileProc)
                 else
                     % Load survey with previously computed slopes
-                    obj = obj.loadSurvey(obj.config.fileOutput);
+                    obj = obj.loadSurvey(obj.config.fileProc);
                 end
 
 
