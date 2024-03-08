@@ -27,7 +27,20 @@ configFile = config_T1_LOSAR();
 cfg = ConfigHandler(configFile);
 
 % Initiate survey
-ColleProfile = Survey.createSurvey(cfg);
+ProfileSurvey = Survey.createSurvey(cfg);
 
 % Process the survey as set in the configuration.
-ColleProfile = ColleProfile.processProfile(cfg);
+ProfileSurvey = ProfileSurvey.processProfile(cfg);
+
+%% Plot processe profile
+figure()
+imagesc(ProfileSurvey.profileDist, ProfileSurvey.rangeCor,20*log10(abs(ProfileSurvey.imgProc)))
+xlabel('Distance (m)')
+ylabel('Depth (m)')
+axis equal
+xlim([0, 165.1])
+ylim([0, 100])
+cb = colorbar;
+cb.Label.String = 'Power (dB)';
+colormap(gray)
+clim([-120, -40])
