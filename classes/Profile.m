@@ -261,6 +261,8 @@ classdef Profile < Survey
             switch lower(obj.config.methodSAR) % Make survey types case insensitive.
                 case 'losar'
                     obj = obj.losar();
+                case 'losar_castelletti'
+                    obj = obj.losar();
                 case 'backprojection'
                     obj = obj.backprojection();
                 case 'interpolation'
@@ -376,47 +378,70 @@ classdef Profile < Survey
                     distInRange = distInRange(idxSort);
                     indOrgInRange = indOrgInRange(idxSort);
     
-                    for n = nRange
-                        % Perform operations on smaller window to increase performance.
-                        isRange = [max([1,n-40]), min([obj.profileSize(k,1),n+40])]; % Vertical range for small image
-                        imgSmall = imgOrg(isRange(1):isRange(2), indOrgInRange);
-                        imgSmallTraces = 1:size(imgSmall,2);
+                    if strcmpi(obj.config.methodSAR, 'losar')
+                        for n = nRange
+                            % Perform operations on smaller window to increase performance.
+                            isRange = [max([1,n-40]), min([obj.profileSize(k,1),n+40])]; % Vertical range for small image
+                            imgSmall = imgOrg(isRange(1):isRange(2), indOrgInRange);
+                            imgSmallTraces = 1:size(imgSmall,2);
+        
+                            slopeFilt =  imgSlopeSAR(n,m);
+                            % drn = dr(n);
+                            drn = median(diff(obj.range));
+                            y = n - distInRange * tand(slopeFilt)/drn - isRange(1) + 1;        
+                            
+                            yMax = isRange(2) - isRange(1) + 1;
+        
+                            % Obtain floor and ceil bin values and ratios
+                            % for its dominance
+                            [yFl,yCe,ratioFl,ratioCe,yFlInRange,yCeInRange] = getFloorCeil(y, yMax);
+                            
+                            % Obtain phase values at these bins
+                            yFlInd = sub2ind(size(imgSmall),yFl,imgSmallTraces(yFlInRange));
+                            yFlPower = imgSmall(yFlInd);
+                            yCeInd = sub2ind(size(imgSmall),yCe,imgSmallTraces(yCeInRange));
+                            yCePower = imgSmall(yCeInd);
+        
+                            % Combine phase points of yFl and yCe in one
+                            % array and scale for the dominance ratios.
+                            PowerAll = [ratioFl .* yFlPower, ratioCe .* yCePower];
+        
+                            % Sum in the phase space to find maximal
+                            % coherence in the phase.
+                            imgPower = sum(PowerAll);
+                            imgPowerIncoherent = sum(abs(PowerAll));
+                            
+                            % Save number of considered points to scale
+                            % results.
+                            imgNumPoints = sum([ratioFl, ratioCe]);
+        
+                            imgSAR(n,m) = max(imgPower)./imgNumPoints;
+                            imgSARIncoherent(n,m) = max(imgPowerIncoherent)./imgNumPoints;
+                        end
+                    else
+                        % Extract data in range                        
+                        BinInRange = imgOrg(:, indOrgInRange);
     
-                        slopeFilt =  imgSlopeSAR(n,m);
-                        % drn = dr(n);
-                        drn = median(diff(obj.range));
-                        y = n - distInRange * tand(slopeFilt)/drn - isRange(1) + 1;        
+                        % Load slope
+                        slopeFilt =  imgSlopeSAR(:,m);
                         
-                        yMax = isRange(2) - isRange(1) + 1;
-    
-                        % Obtain floor and ceil bin values and ratios
-                        % for its dominance
-                        [yFl,yCe,ratioFl,ratioCe,yFlInRange,yCeInRange] = getFloorCeil(y, yMax);
+                        % Compute phase correction
+                        dPhi = tand(slopeFilt) * distInRange * 4 * pi / obj.lambdaC;
                         
-                        % Obtain phase values at these bins
-                        yFlInd = sub2ind(size(imgSmall),yFl,imgSmallTraces(yFlInRange));
-                        yFlPower = imgSmall(yFlInd);
-                        yCeInd = sub2ind(size(imgSmall),yCe,imgSmallTraces(yCeInRange));
-                        yCePower = imgSmall(yCeInd);
+                        % Apply phase correction
+                        BinInRange = BinInRange .* exp(1i*(dPhi));
     
-                        % Combine phase points of yFl and yCe in one
-                        % array and scale for the dominance ratios.
-                        PowerAll = [ratioFl .* yFlPower, ratioCe .* yCePower];
-    
-                        % Sum in the phase space to find maximal
-                        % coherence in the phase.
-                        imgPower = sum(PowerAll);
-                        imgPowerIncoherent = sum(abs(PowerAll));
+                        % Sum power over each range bin
+                        sumPower = sum(BinInRange, 2);
+                        sumPowerIncoherent = sum(abs(BinInRange),2);
                         
-                        % Save number of considered points to scale
-                        % results.
-                        imgNumPoints = sum([ratioFl, ratioCe]);
+                        % Find number of considered traces to scale results
+                        imgNumPoints = numel(indOrgInRange);
     
-                        imgSAR(n,m) = max(imgPower)./imgNumPoints;
-                        imgSARIncoherent(n,m) = max(imgPowerIncoherent)./imgNumPoints;
-    
+                        % Scale power and assign to SAR trace
+                        imgSAR(:,m) = sumPower./imgNumPoints;
+                        imgSARIncoherent(:,m) = sumPowerIncoherent./imgNumPoints;
                     end
-
                     disp(['Layer-optimized SAR processing, trace: ' num2str(m) '/' num2str(numel(mRange))]);
                 end
                 obj.imgProc(:,indSAR) = imgSAR;
