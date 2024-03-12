@@ -265,6 +265,8 @@ classdef Profile < Survey
                     obj = obj.backprojection();
                 case 'interpolation'
                     obj = obj.profileInterpolation();
+                case 'movmean'
+                    obj = obj.movmean();
                 otherwise
                     error(['processSAR: SAR processing method "' obj.config.methodSAR '" is unknown.']);
             end
@@ -475,6 +477,56 @@ classdef Profile < Survey
                 
                 obj.imgProc(:,indSAR) = lineImgSAR;
             
+            end
+        end
+
+
+        function obj = movmean(obj)
+            %MOVMEAN computes the moving mean along the pRES profile.
+            %   This function computes the moving mean along a mobile pRES
+            %   profile over the SAR length. Essentially, this corresponds
+            %   to an unfocused SAR computation.
+            %
+            % Falk Oraschewski, 11.03.2022
+            
+            disp('Profile processing method: Moving mean')
+
+            % Create empty matrizies for processed images
+            obj.imgProc = zeros([obj.profileSize(1,1) sum(obj.profileSize(:,2))]);
+            obj.imgProcIncoherent = zeros(size(obj.imgProc));
+
+            % Find number of individual lines. 
+            datKeys = unique(obj.lineNumber);
+            sarKeys = unique(obj.profileLine);
+            nLines = numel(datKeys);
+
+            % Iterate over individual lines.
+            for k = 1:nLines
+                % Obtain indizes of lines in original and processed image
+                indOrg = (obj.lineNumber == datKeys(k)); % Indizes of line in orignal radargram
+                lnPosOrg = obj.pos(:,indOrg);
+
+                indSAR = (obj.profileLine == sarKeys(k)); % Indizes of line in processed radargram
+                lnPosSAR = obj.profilePos(:,indSAR);
+
+                lineLenSAR = obj.profileSize(k,2);
+
+                lineImg = zeros(obj.profileSize(1,1), lineLenSAR);
+                lineImgIncoherent = zeros(obj.profileSize(1,1), lineLenSAR);
+
+                mRange = 1:lineLenSAR;
+                for m = mRange
+                    % Find points in SAR range
+                    mDistAll = sqrt((lnPosOrg(1,:) - lnPosSAR(1,m)).^2 + (lnPosOrg(2,:) - lnPosSAR(2,m)).^2); % Distance of SAR point to all traces
+                    indOrgInRange = find(mDistAll < obj.config.lengthSAR/2); % Indizes of datapoints in SAR range
+
+                    %  Compute moving mean of the points in range
+                    lineImg(:,m) = abs(mean(obj.specCor(:,indOrgInRange), 2)); % Coherent summation
+                    lineImgIncoherent(:,m) = mean(abs(obj.specCor(:,indOrgInRange)), 2); % Incoherent summation
+                end
+                % Assign line images to full output matrix
+                obj.imgProc(:,indSAR) = lineImg;
+                obj.imgProcIncoherent(:,indSAR) = lineImgIncoherent;
             end
         end
 
