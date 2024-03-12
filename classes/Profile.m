@@ -264,7 +264,7 @@ classdef Profile < Survey
                 case 'backprojection'
                     obj = obj.backprojection();
                 case 'interpolation'
-                    obj = obj.profileInterpolation();
+                    obj = obj.interpolation();
                 case 'movmean'
                     obj = obj.movmean();
                 otherwise
@@ -425,8 +425,8 @@ classdef Profile < Survey
         end
 
 
-        function obj = profileInterpolation(obj)
-            %PROFILEINTERPOLATION assigns to each profile position the data value of
+        function obj = interpolation(obj)
+            %INTERPOLATION assigns to each profile position the data value of
             %the nearest recorded data point.
             %   Detailed explanation goes here
             %
