@@ -1,46 +1,47 @@
-%%% pRocESsor, for mobile pRES surveys
-% This script runs the processing of mobile pRES surveys.
+%%% pRocESsor
+% Processor for mobile pRES surveys
 %
-% The user only needs to define a configFile which needs to be stored
-% under './config'. In this file, the survey type (currently only
-% 'profile' is possible), file paths and names and settings for the applied
-% processing are defined
+% Usage:
+% 1. Create a config file for your survey.
+%       In this configFile, all information required to process the data
+%       can be provided, including file paths and processing settings.
+% 2. Define the config file below under configFile.
+% 3. Run this script.
+% ------------------------------------------------------------------------%
+% 4. The processed data is stored as set in 'dirProc/fileProc' and a quick
+%    view plot is provided.
 % 
-% This script loads the config file, initiates the survey object and
-% executes the processing.
-% 
-% Falk Oraschewski, 04.04.2023
-
-% Clear workspace and command window, close open figures
+% Falk Oraschewski
+% University of Tübingen
+% 04.04.2023
 clear
-clc
 close all
 
 % Add package path
 addpath(genpath(pwd))
 
-%% Define configuration file
-configFile = config_T1_LOSAR();
+%% Set configuration file
+configFile = config_T1_losar();
 
-%% Execute processing for pRES survey processing
-% Handle configuration file
+%% Execute pRocESsor
+% Create config handle
 cfg = ConfigHandler(configFile);
 
 % Initiate survey
 ProfileSurvey = Survey.createSurvey(cfg);
 
-% Process the survey as set in the configuration.
+% Process the survey as set in the config.
 ProfileSurvey = ProfileSurvey.processProfile(cfg);
 
-%% Plot processe profile
+%% Plot processed profile
 figure()
-imagesc(ProfileSurvey.profileDist, ProfileSurvey.rangeCor,20*log10(abs(ProfileSurvey.imgProc)))
+imagesc(ProfileSurvey.profileDist, ProfileSurvey.rangeCor, 20*log10(abs(ProfileSurvey.imgProc)))
 xlabel('Distance (m)')
 ylabel('Depth (m)')
 axis equal
-xlim([0, 165.1])
-ylim([0, 100])
+%xlim([0, 165.1])
+%ylim([0, 100])
 cb = colorbar;
 cb.Label.String = 'Power (dB)';
 colormap(gray)
-clim([-120, -40])
+clim([-105, -40])
