@@ -67,7 +67,8 @@ classdef Survey
     end
 
     methods (Static)
-        function obj = createSurvey(config)
+        function obj = initiateSurvey(config)
+            % INITIATESURVEY creates or loads survey object.
             
             % Check if a file for the pre-processed survey data already
             % exsists and shall not be overwritten.

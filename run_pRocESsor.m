@@ -28,7 +28,7 @@ configFile = config_T1_losar();
 cfg = ConfigHandler(configFile);
 
 % Initiate survey
-ProfileSurvey = Survey.createSurvey(cfg);
+ProfileSurvey = Survey.initiateSurvey(cfg);
 
 % Process the survey as set in the config.
 ProfileSurvey = ProfileSurvey.processProfile(cfg);
