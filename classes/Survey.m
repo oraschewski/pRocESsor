@@ -153,14 +153,16 @@ classdef Survey
                 
                 % ToDo: Include functionality to handle MIMO files and
                 % multiple attenuations.
-                % vdats = fmcw_split_all(vdat);
-                
-                % Number of combinations that are used
-                %numUseVdats = config.useAttenuator * config.useTx * config.useRx;
+                    % Number of combinations that are used
+                    %numUseVdats = config.useAttenuator * config.useTx * config.useRx;
 
                 % At the moment only the first antenna combination can be
-                % used and the atennuator selected by:
-                % vdat = vdats(config.useAttenuator);
+                % used.
+                % Select attenuation setting
+                if config.useAttenuation > 1
+                    vdats = fmcw_split_all(vdat);
+                    vdat = vdats(config.useAttenuation);
+                end
 
                 % Handle multiple bursts:
                 if config.lowestNoise
@@ -482,6 +484,7 @@ classdef Survey
 
             obj.config = obj_org.config;
         end
+
 
         function saveSurvey(obj, filename)
             % LOADSURVEY saves a survey object .mat-file after excluding
