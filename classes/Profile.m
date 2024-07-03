@@ -4,15 +4,12 @@ classdef Profile < Survey
     %   were generated using a mobile pRES setup.
     %
     %   For details, see:
-    %   Oraschewski et al., [preprint], Layer-optimized SAR processing with
-    %   a mobile phase-sensitive radar for detecting the deep englacial
-    %   stratigraphy of Colle Gnifetti, Switzerland/Italy.
-    %   https://doi.org/10.5194/egusphere-2023-2731
+    %   Oraschewski et al. (2024) Layer-optimized SAR processing with a
+    %   mobile mobile phase-sensitive radar: a proof of concept for
+    %   detecting the deep englacial stratigraphy of Colle Gnifetti,
+    %   Switzerland/Italy. The Cryosphere.
 
-    
     properties
-        %methonSAR string
-
         distFit double
         txPos double
         rxPos double
