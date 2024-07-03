@@ -163,13 +163,23 @@ classdef Survey
                 % used and the atennuator selected by:
                 % vdat = vdats(config.useAttenuator);
 
-                % Compute the mean of the burst.
-                %vdat = fmcw_burst_mean(vdat);
-                                
-                % Select burst with lowest noise floor.
+                % Handle multiple bursts:
                 if config.lowestNoise
+                    % Select burst with lowest noise floor.
                     [~,~,~,spec] = fmcw_range(vdat,config.padding,4*config.maxDepth,@blackman);
                     [vdat,selBurst] = fmcw_burst_select(vdat,spec);
+                elseif config.burstMean
+                    % Compute the mean of the burst.
+                    vdat = fmcw_burst_mean(vdat);
+                else
+                    % Use first burst
+                    selBurst = 1;
+                    vdat.vif =  vdat.vif(selBurst,:);
+                    vdat.Startind =  vdat.Startind(selBurst);
+                    vdat.Endind =  vdat.Endind(selBurst);
+                    vdat.chirpNum =  vdat.chirpNum(selBurst);
+                    vdat.chirpAtt =  vdat.chirpAtt(selBurst);
+                    vdat.chirpTime = vdat.chirpTime(selBurst);
                 end
 
                 % Range compresion of FMCW data (following Brennan et al., 2014)

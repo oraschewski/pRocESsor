@@ -59,6 +59,7 @@ classdef ConfigHandler
         
         % Optional settings
         lowestNoise = false      % Option to select burst with lower noise floor
+        burstMean = false        % Option to compute mean of all chirps in burst
         correctDensity = false  % Flag indicating usage of density correction
         cropCables = false      % Flag indicating usage of cable cropping
         matchShape = false      % Flag indicating usage of signal matching
