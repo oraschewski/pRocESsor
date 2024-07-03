@@ -21,7 +21,7 @@ Using `run_pRocESsor.m`, the input data is processed as defined in the selected 
 Raw ApRES `.dat`-files have to be stored in `dirRaw`. Intermediate pre-processed data after applying the standard FMCW signal processing is stored in `dirPreProc/filePreProc` and the final output data in `dirProc/fileProc` as `.mat`-files.  
 In addition, GPS data and firn density data can be provided as `.csv`-files in `dirGPS/fileGPS` and `dirSup/fileDensity`.
 
-To quickly load processed data, run  
+Processed data can be loaded quickly by running:  
     `addpath(genpath(path_to_pRocESsor))`  
     `cfg = ConfigHandler(config_file);`  
     `data = load(cfg.fileProc);`  
