@@ -303,6 +303,8 @@ classdef Survey
 
             if config.correctDensity
                 obj = obj.correctDensity();
+            else
+                obj.rangeCor = obj.range;
             end
 
             if config.matchShape
