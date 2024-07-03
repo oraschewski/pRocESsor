@@ -148,7 +148,8 @@ classdef Survey
                 % Obtain file name
                 iiSelInd = config.selInd(ii);
                 fileName = fullfile(rawFiles(iiSelInd).folder, rawFiles(iiSelInd).name);
-                
+                %disp(fileName)
+
                 % Load the file.
                 vdat = fmcw_load(fileName);
                 
@@ -280,7 +281,9 @@ classdef Survey
                     % Assign GPS data by matching with filename
                     for indObj = 1:obj.numFiles
                         indGPS = find(obj.fileName(indObj)==filenames);
-
+                        if isempty(indGPS)
+                            error(['Survey/loadGPS: filename "' char(obj.fileName(indObj)) '" is missing in GPS file.'])
+                        end
                         obj.lat(indObj) = latitude(indGPS);
                         obj.lon(indObj) = longitude(indGPS);
                         obj.elev(indObj) = elevation(indGPS);
