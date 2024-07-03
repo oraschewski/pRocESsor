@@ -22,7 +22,7 @@ Raw ApRES `.dat`-files have to be stored in `dirRaw`. Intermediate pre-processed
 In addition, GPS data and firn density data can be provided as `.csv`-files in `dirGPS/fileGPS` and `dirSup/fileDensity`.
 
 To quickly load processed data, run  
-    addpath(genpath(path_to_pRocESsor))  
-    cfg = ConfigHandler(config_file);  
-    data = load(cfg.fileProc);  
+    `addpath(genpath(path_to_pRocESsor))`  
+    `cfg = ConfigHandler(config_file);`  
+    `data = load(cfg.fileProc);`  
 
