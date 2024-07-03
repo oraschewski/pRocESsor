@@ -1,14 +1,30 @@
 # pRocESsor
-Processor for pRES surveys (v0.1; for mobile pRES profiling)
 
-The pRocESsor was developed to handle profiling data acquired with the (A)pRES radar, developed by the British Antarctic Survey (BAS). It is implemented with a modular approach to be expandable for further applications and acquisitions methods.
+## Processor for pRES surveys (v1.0; for mobile pRES profiling)
 
-To run the pRocESsor, a configuration file as stored under './config' needs to be created and run using 'run_pRocESsor.m'. The processed data are stored as defined by the settings 'dirProc'/'fileProc'.
+pRocESsor was developed to handle profiling data acquired with a mobilized Autonomous phase-sensitive Radio Echo Sounder (ApRES), in the following referred to as mobile pRES. Currently, the main application of pRocESsor is to improve the imaging of englacial stratigraphy recorded with a mobile pRES using Layer-optimized SAR processing. pRocESsor is implemented with a modular approach, enabling to include other applications and acquisition methods of the ApRES.
 
-The processed data can be obtained by running
-  addpath(genpath(path_to_pRocESsor))
-  cfg = ConfigHandler(config_file);
-  data = load(cfg.fileProc);
+The processing method is detailed in:
+  Oraschewski et al. (2024) Layer-optimized SAR processing with a mobile phase-sensitive radar: a proof of concept for detecting the deep englacial stratigraphy of Colle Gnifetti, Switzerland/Italy. The Cryosphere.
 
-The implemented pRES profile processing is detailed in
-Oraschewski et al., [preprint], Layer-optimized SAR processing with a mobile phase-sensitive radar for detecting the deep englacial stratigraphy of Colle Gnifetti, Switzerland/Italy, https://doi.org/10.5194/egusphere-2023-2731.
+The ApRES was developed by the British Antarctic Survey (BAS) and the University College London (UCL). 
+
+---
+
+## Run pRocESsor
+
+Using `run_pRocESsor.m`, the input data is processed as defined in the selected configuration file. Example config files are povided under `./config`.
+
+Raw ApRES `.dat`-files have to be stored in `dirRaw`. Intermediate pre-processed data after applying the standard FMCW signal processing is stored in `dirPreProc/filePreProc` and the final output data in `dirProc/fileProc` as `.mat`-files.
+In addition, GPS data and firn density data can be provided as `.csv`-files in `dirGPS/fileGPS` and `dirSup/fileDensity`.
+
+To quickly load processed data, run
+    addpath(genpath(path_to_pRocESsor))
+    cfg = ConfigHandler(config_file);
+    data = load(cfg.fileProc);
+
+
+**Author:**
+Falk Oraschewski
+University of Tübingen
+03.07.2024
