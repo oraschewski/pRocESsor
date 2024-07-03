@@ -22,7 +22,7 @@ cfg.dirGPS      = 'data/raw_data/gps';          % Subpath to GPS data
 cfg.dirSup      = 'data/supplement_data';       % Subpath to any supplementary data
 
 % Filenames
-cfg.fileProc    = 'T1_LOSAR_filtered.mat';      % Processed output data file
+cfg.fileProc    = 'T1_losar.mat';      % Processed output data file
 cfg.filePreProc = 'T1_p8_md100.mat';            % Pre-processed data file (after fmcw_range is applied).
 cfg.filePos     = 'T1_pos_smooth.mat';          % Pre-processed positioning data file
 cfg.fileGPS     = 'gpsAll.csv';                 % Input file for GPS data (currently only .csv files are supported with the fields 'filename', 'latitude', 'longitude' and 'elevation').
@@ -32,7 +32,7 @@ cfg.fileDensity = 'densityKCC_LinearlyExtrapolated.csv'; % Density data (current
 cfg.newPreProc  = false; % Option to update cfg.filePreProc
 cfg.newPos      = false; % Option to update cfg.filePos
 cfg.newProc     = true; % Option to update cfg.fileProc
-cfg.newSlopes   = true; % Option to avoid reprocessing the slope
+cfg.newSlopes   = false; % Option to avoid reprocessing the slope
 
 
 %% Processing settings
@@ -47,7 +47,7 @@ cfg.methodSAR       = 'losar';      % Options: 'losar', 'interpolation', 'movmea
 cfg.lengthSAR       = 5;            % Synthetic aperture length (m)
 cfg.methodPos       = 'smooth';     % Position processing method; Options: 'smooth', 'org'
 cfg.methodSlope     = 'linefit';    % Slope estimation methods; options: 'linefit', 'compute' 
-cfg.filterSlopes    = true;         % Option to filter slopes using a 2d moving median filter
+cfg.filterSlopes    = false;         % Option to filter slopes using a 2d moving median filter
 cfg.paramSmoothing  = 0.3;          % Smoothing parameter for positioning
 cfg.profileSpacing  = 0.1;          % Equidistant spacing for processed profile 
 cfg.useAntennaPos   = false;        % Estimate antenna positions (currently this has no effect)
