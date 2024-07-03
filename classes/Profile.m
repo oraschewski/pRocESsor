@@ -730,6 +730,7 @@ classdef Profile < Survey
                 testSlopes = -cfg.slopeMax:cfg.slopeInterval:cfg.slopeMax;
 
                 for n = 1:traceLen
+                % parfor n = 1:traceLen % Use parallel computing to speed up code
                     imgPhase = zeros(size(testSlopes));
                     imgNumPoints = zeros(size(testSlopes));
                     
