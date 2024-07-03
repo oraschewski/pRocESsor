@@ -278,6 +278,13 @@ classdef Survey
                     longitude = gpsData.('longitude');
                     elevation = gpsData.('elevation');
 
+                    % Add .dat to file names if not existing
+                    for indFile = 1:numel(filenames)
+                        if ~contains(filenames{indFile},'.dat')
+                            filenames{indFile} = [filenames{indFile} '.dat'];
+                        end
+                    end
+
                     % Assign GPS data by matching with filename
                     for indObj = 1:obj.numFiles
                         indGPS = find(obj.fileName(indObj)==filenames);
