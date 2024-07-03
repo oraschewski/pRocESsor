@@ -1,6 +1,6 @@
 classdef Survey
-    % SURVEY is the base class for all possible pRES surveys.
-    %   The pRES can be employed in various ways for different
+    % SURVEY is the base class for all possible ApRES surveys.
+    %   The ApRES can be employed in various ways for different
     %   applications. While many of the required processing steps for the
     %   different survey types differ, many are also the same.
     %
@@ -49,14 +49,14 @@ classdef Survey
         permittivity double = 3.17;
         ci double
         lambdaC double
-        padding double = 2
+        padding double = 2;
 
         numFiles uint16
         fileName string
 
         cableTx double = NaN;
         cableRx double = NaN;
-        distAntenna double = NaN
+        distAntenna double = NaN;
 
         flags = [];
         config
@@ -70,7 +70,7 @@ classdef Survey
         function obj = createSurvey(config)
             
             % Check if a file for the pre-processed survey data already
-            % exsist exists and shall not be overwritten.
+            % exsists and shall not be overwritten.
             if ~config.newPreProc && exist(config.filePreProc, 'file') == 2
                 % Load existing Survey object.
                 pRESdata = load(config.filePreProc,'-mat');
@@ -81,7 +81,7 @@ classdef Survey
                 % Update configurations in Survey object.
                 obj.config = config;
             else
-                % Otherwise create new survey object depending on the
+                % Otherwise, create new survey object depending on the
                 % survey type.
                 switch lower(config.typeSurvey) % Make survey typeSurvey is case insensitive.
                     case 'profile'
@@ -95,14 +95,15 @@ classdef Survey
                 end
 
                 %%% Saving the new survey object.
+                % Create survey object
+                pRESdata = obj;
+
                 % Exclude local folder structure from config field for file sharing.
                 cs = obj.config;
                 [cs.dirProject, cs.dirRaw, cs.dirPreProc, cs.dirProc, cs.dirGPS, cs.dirSup, cs.filePreProc, cs.fileProc, cs.filePos, cs.fileGPS, cs.fileDensity] = deal([]);
-                
-                % Create survey object
-                pRESdata = obj;
                 % Update config field
                 pRESdata.config = cs;
+                
                 % Save survey object
                 save(config.filePreProc,'pRESdata');
                 clear pRESdata
@@ -113,13 +114,10 @@ classdef Survey
 
     methods
         function obj = Survey(config)
-            % SURVEY: Constructor for Survey class
+            % SURVEY Constructor for Survey class
             %   This method creates the base survey object, providing the
             %   pre-processed pRES data. It is applicable to all survey
             %   types.
-
-            % Get base class properties
-            %   Detailed explanation goes here
             
             % Set survey type
             obj.type = config.typeSurvey;
@@ -173,7 +171,7 @@ classdef Survey
                     % Compute the mean of the burst.
                     vdat = fmcw_burst_mean(vdat);
                 else
-                    % Use first burst
+                    % Alternatively, use first burst
                     selBurst = 1;
                     vdat.vif =  vdat.vif(selBurst,:);
                     vdat.Startind =  vdat.Startind(selBurst);
@@ -188,7 +186,6 @@ classdef Survey
 
                 % Initalize data structure for survey.
                 if ii == 1
-
                     obj.range = range';
                     obj.twtt = obj.range / (physconst('lightspeed') / sqrt(vdat.er) / 2);
                     obj.dtBin = obj.twtt(2) - obj.twtt(1);
@@ -262,7 +259,8 @@ classdef Survey
 
 
         function obj = loadGPS(obj)
-            % LOADGPS loads the GPS data.
+            % LOADGPS loads GPS data.
+            %
             %   Options:
             %   csv: comma-seperated csv file with the fields
             %       filename, latitude, longitude and elevation
@@ -296,7 +294,7 @@ classdef Survey
                         obj.elev(indObj) = elevation(indGPS);
                     end
                 otherwise
-                    error('Invalid survey type.');
+                    error('Invalid GPS input type.');
             end
             
             % Turn lat/lon into x/y coordinates.
@@ -317,16 +315,19 @@ classdef Survey
             %   Process survey runs the processing steps that are
             %   potentially applicable to all survey types.
             
+            % Option to crop data for cable length
             if config.cropCables
                 obj = obj.cropCables();
             end
 
+            % Option to correct for firn density
             if config.correctDensity
                 obj = obj.correctDensity();
             else
                 obj.rangeCor = obj.range;
             end
 
+            % Option to apply a shape matching filter (following Rahman et al., 2014)
             if config.matchShape
                 obj = obj.matchShape();
             end
@@ -367,6 +368,7 @@ classdef Survey
             obj.spec = obj.spec .*  repmat(exp(-1i*(angle(obj.spec(1,:)))), size(obj.spec,1), 1);
             obj.specCor = obj.specCor .*  repmat(exp(-1i*(angle(obj.specCor(1,:)))), size(obj.specCor,1), 1);
         end
+
 
         function obj = correctDensity(obj)
             %DENSITY_CORRECTION computes the density corrected range of
@@ -414,6 +416,7 @@ classdef Survey
             disp([flag{1} newline])
         end
 
+
         function obj = matchShape(obj)
             %MATCHSHAPE Matches the recorded with expected shape repsonses
             %of reflections.
@@ -424,7 +427,8 @@ classdef Survey
             %   This method is implemented following:
             %   Rahman et al. (2014), Shape matching algorithm for
             %   detecting radar hidden targets to determine internal layers
-            %   in Antarctic ice shelves.
+            %   in Antarctic ice shelves, 2014 IEEE Radar Conference
+            %   (RadarCon).
 
             % Create the filter
             % (Defined based on typical signal responses).
@@ -470,7 +474,9 @@ classdef Survey
             disp([flag{1} newline])
         end
         
+
         function obj = loadSurvey(obj_org,filename)
+            % LOADSURVEY loads a survey object .mat-file
             pRESdata = load(filename,'-mat');
             obj = pRESdata.pRESdata;
 
@@ -478,11 +484,18 @@ classdef Survey
         end
 
         function saveSurvey(obj, filename)
+            % LOADSURVEY saves a survey object .mat-file after excluding
+            % local folder structure settings.
+
+            % Create structure to save
+            pRESdata = obj;
+
+            % Exclude local folder structure
             cs = obj.config;
             [cs.dirProject, cs.dirRaw, cs.dirPreProc, cs.dirProc, cs.dirGPS, cs.dirSup, cs.filePreProc, cs.fileProc, cs.filePos, cs.fileGPS, cs.fileDensity] = deal([]);
-
-            pRESdata = obj;
             pRESdata.config = cs;
+
+            % Save file.
             save(filename,'pRESdata');
         end
     end
