@@ -171,6 +171,11 @@ classdef Profile < Survey
             %POSITIONPROFILE Summary of this function goes here
             %   Detailed explanation goes here
             
+            % Update Coordinate system
+            proj = projcrs(obj.config.surveyEPSG);
+            [obj.x, obj.y] = projfwd(proj, obj.lat, obj.lon);
+            obj.pos = [obj.x; obj.y; obj.elev];
+
             switch lower(obj.config.methodPos) % Make survey types case insensitive.
                 case 'org'
                     obj.profilePos = obj.pos;
