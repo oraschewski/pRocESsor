@@ -22,7 +22,7 @@ cfg.dirGPS      = 'data/raw_data/gps';          % Subpath to GPS data
 cfg.dirSup      = 'data/supplement_data';       % Subpath to any supplementary data
 
 % Filenames
-cfg.fileProc    = 'T1_interp.mat';               % File for processed output data
+cfg.fileProc    = 'T1_interp.mat';              % File for processed output data
 cfg.filePreProc = 'T1_p8_md100.mat';            % File for pre-processed data (after FMCW signal processing is applied).
 cfg.filePos     = 'T1_pos_smooth.mat';          % File for pre-processed positioning data
 cfg.fileGPS     = 'gpsAll.csv';                 % File for GPS data     (currently only .csv files are supported with the fields 'filename', 'latitude', 'longitude' and 'elevation').
