@@ -1,88 +1,84 @@
 classdef ConfigHandler
-    % CONFIGHANDLER: A class that handles configuration settings for the pRES survey processing.
-    %   This class encapsulates various properties representing different aspects
-    %   of the survey setup and processing settings.
+    % CONFIGHANDLER create a config object that includes all settings for
+    % processing an ApRES survey.
     
     properties
         % Survey type
-        typeSurvey  % Type of survey (option: profile)
+        typeSurvey = 'profile'; % Survey type (Currently only option: 'profile')
         
         % File settings
-        dirProject  % Root project directory
+        dirProject              % Root directory for project
         
-        dirRaw      % Directory for raw/input files
-        dirPreProc  % Directory for pre-processed pRES data
-        dirProc     % Directory for processed output
-        dirGPS      % Directory for GPS files
-        dirSup      % Directory for supplementary inputs
+        dirRaw                  % Directory for raw/input files
+        dirPreProc              % Directory for pre-processed pRES data
+        dirProc                 % Directory for processed output
+        dirGPS                  % Directory for GPS files
+        dirSup                  % Directory for supplementary inputs
         
-        filePreProc % Pre-processed data file
-        filePos     % Processed position data file
-        fileProc    % Processed data file
-        fileGPS     % GPS data file
-        fileDensity % Density data file
+        filePreProc             % Pre-processed data file
+        fileProc                % Processed data file
+        filePos                 % Processed position data file
+        fileGPS                 % GPS data file
+        fileDensity             % Density data file
         
         % Update settings
-        newPreProc = false; % Flag indicating to (re-processed data
-        newPos = false;     % Flag indicating new position data
-        newSlopes = true;  % Flag indicating new slope data
-        newProc = false;    % Flag indicating new output data
+        newPreProc = false;     % Flag to re-perform pre-processing
+        newPos = false;         % Flag to re-process positioning
+        newSlopes = true;       % Flag to re-process slopes
+        newProc = false;        % Flag to re-process final output
         
-        % Default pRES settings
-        T = 1;               % Pulse duration
-        B = 2e8;             % Bandwidth
-        f0 = 2e8;            % Start frequency
-        fc = 3e8;            % Center frequency
-        K                    % Sweep rate (K = 2pi*B/T)
-        icePermittivity = 3.18; % Ice permittivity
-        useAttenuators      % Flag indicating usage of attenuators
+        % ApRES settings
+        T = 1;                  % Pulse duration [s]
+        B = 2e8;                % Bandwidth [Hz]
+        f0 = 2e8;               % Start frequency [Hz]
+        fc = 3e8;               % Center frequency [Hz]
+        K                       % Sweep rate (K = 2pi*B/T)
+        icePermittivity = 3.17; % Ice permittivity
         
         % Survey setup settings
-        maxDepth = 1000;     % Maximum depth
-        padding = 1;         % Padding
-        skipFirst = 0;       % Skip first data points
-        skipLast = 0;        % Skip last data points
-        selInd = [];         % Selected indices
+        maxDepth = 1000;        % Maximum depth
+        padding = 1;            % Padding
+        skipFirst = 0;          % Skip first data points
+        skipLast = 0;           % Skip last data points
+        selInd = [];            % Selected indices
         
         % Radar settings
-        useAttenuator = 1   % Flag indicating usage of attenuator
-        useTx = 1           % Flag indicating usage of transmitter
-        useRx = 1           % Flag indicating usage of receiver
-        cableTx             % Transmitter cable length
-        cableRx             % Receiver cable length
-        distAntenna         % Distance between antennas
+        useAttenuation = 1      % Selected attenuation settings
+        useTx = 1               % Selected transmitter (currently has no effect)
+        useRx = 1               % Selected receiver (currently has no effect)
+        cableTx                 % Transmitter cable length
+        cableRx                 % Receiver cable length
+        distAntenna             % Distance between antennas
         
         % Positioning settings
-        useGPS = true;      % Flag indicating usage of GPS
-        typeGPS             % Type of GPS
-        surveyEPSG double  % Survey EPSG code
+        useGPS = true;          % Flag indicating usage of GPS
+        typeGPS                 % Type of GPS
+        surveyEPSG double       % Survey EPSG code
         
         % Optional settings
-        lowestNoise = false      % Option to select burst with lower noise floor
-        burstMean = false        % Option to compute mean of all chirps in burst
-        correctDensity = false  % Flag indicating usage of density correction
-        cropCables = false      % Flag indicating usage of cable cropping
-        matchShape = false      % Flag indicating usage of signal matching
+        lowestNoise = false     % Flag to select burst with lower noise floor
+        burstMean = false       % Option to compute mean of all chirps in burst
+        correctDensity = false  % Flag to use density correction
+        cropCables = false      % Flag to use cable cropping
+        matchShape = false      % Flag to use signal matching
         
         % Survey type specific settings
-        lengthSAR           % SAR length
-        methodPos           % Positioning method
-        methodSlope = 'linefit'; % Slope method
-        filterSlopes = true  % Flag indicating usage of slope filtering
-        slopeMax = 10;       % Slope range boundaries for 'linefit'
-        slopeInterval = 0.1; % Slope range interval for 'linefit'
         methodProc                  % Processing method (options are survey specific)
+        lengthSAR                   % SAR length
+        methodPos                   % Positioning method
+        methodSlope = 'linefit';    % Slope method
+        filterSlopes = true         % Flag to use of slope filtering
         slopeMax = 10;              % Slope range boundaries for 'linefit' [degrees]
         slopeInterval = 0.1;        % Slope range interval for 'linefit' [degrees]
         slopeFilterWin = [10 10];   % Slope filtering window [bins]
+
+        posSmoothing = 0.3;     % Smoothing parameter
+        profileSpacing = 0.1;   % Profile spacing [m]
+        useAntennaPos           % Flag to use antenna position (currently this has no effect)
         
-        paramSmoothing      % Smoothing parameter
-        profileSpacing      % Profile spacing
-        useAntennaPos       % Flag indicating usage of antenna position
-        
-        defineLines         % Definition of lines
-        numLines            % Number of lines
-        indLines            % Indices of lines
+        defineLines             % Flag to define seperate lines in data
+        numLines                % Number of lines
+        indLines                % Indices of lines
     end
     
     methods
