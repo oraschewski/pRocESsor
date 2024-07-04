@@ -98,45 +98,6 @@ classdef Profile < Survey
         end
 
 
-        function obj = estimateAntennaPos(obj)
-            %ESTIMATEANTENNAPOS estimates the position of the antennas at
-            %each trace on the profile.
-            %   This method estimates the antenna positions for each trace
-            %   on the profile, based on the positions of the previous and
-            %   following trace locations.
-            %   
-            %   Note: Currently, the estimated antenna positions are not
-            %   used further and the method is only included for potential
-            %   future use.
-
-            disp('Antenna positions are estimated. Currently this has no effect.')
-            
-            dx = diff(obj.x);
-            dy = diff(obj.y);
-            dz = diff(obj.elev);
-            dthrsh = 10;
-            antenna_averaging = 3;
-            dBig = any([abs(dx) > dthrsh*mean(abs(dx)); abs(dy) > dthrsh*mean(abs(dy))]);
-            dx(dBig) = NaN;
-            dy(dBig) = NaN;
-            dz(dBig) = NaN;    
-            dx = movmean(dx, antenna_averaging,'omitnan');
-            dy = movmean(dy, antenna_averaging,'omitnan');
-            dz = movmean(dz, antenna_averaging,'omitnan');
-            dx = [dx dx(end)];
-            dy = [dy dy(end)];
-            dz = [dz dz(end)];
-            
-            % Calculate normalised delta
-            deltaAntenna = [dx; dy; dz];
-            deltaAntenna = deltaAntenna ./ vecnorm(deltaAntenna);
-        
-            % Estimated Antenna positions
-            obj.txPos = obj.pos + deltaAntenna * obj.config.distAntenna / 2;
-            obj.rxPos = obj.pos - deltaAntenna * obj.config.distAntenna / 2;
-        end
-
-
         function obj = obtainLines(obj)
             %OBTAINLINES obtains linenumbers as defined in config file.
             %
@@ -839,20 +800,42 @@ classdef Profile < Survey
         end
 
 
-        function obj = slopeRadon(obj)
-            % ToDo: 
+        function obj = estimateAntennaPos(obj)
+            %ESTIMATEANTENNAPOS estimates the position of the antennas at
+            %each trace on the profile.
+            %   This method estimates the antenna positions for each trace
+            %   on the profile, based on the positions of the previous and
+            %   following trace locations.
+            %   
+            %   Note: Currently, the estimated antenna positions are not
+            %   used further and the method is only included for potential
+            %   future use.
 
-%             nxMed = 0;%n - isRange(1) + 1;
-%             nyMed = 0;%median(find(irIndOrg));
-%             sigX = median(find(irIndOrg))/20;
-% 
-%             imgGaussFilter = customgauss(size(imgSmallPhase), 10, sigX, 0, 0, 1, [nxMed nyMed]);
-% 
-%             
-%             imgSmallPhaseFilter  = angle(imgSmallPhase) .* imgGaussFilter;
-%             ris = radon(imgSmallPhaseFilter);
-%             isRangeM = obj.range(isRange(1):isRange(2));
-%             [slope, ~, ~, ~, ~] = radon_ndh(irDist, isRangeM, angle(imgSmallPhase), 30, 0, 1);
+            disp('Antenna positions are estimated. Currently this has no effect.')
+            
+            dx = diff(obj.x);
+            dy = diff(obj.y);
+            dz = diff(obj.elev);
+            dthrsh = 10;
+            antenna_averaging = 3;
+            dBig = any([abs(dx) > dthrsh*mean(abs(dx)); abs(dy) > dthrsh*mean(abs(dy))]);
+            dx(dBig) = NaN;
+            dy(dBig) = NaN;
+            dz(dBig) = NaN;    
+            dx = movmean(dx, antenna_averaging,'omitnan');
+            dy = movmean(dy, antenna_averaging,'omitnan');
+            dz = movmean(dz, antenna_averaging,'omitnan');
+            dx = [dx dx(end)];
+            dy = [dy dy(end)];
+            dz = [dz dz(end)];
+            
+            % Calculate normalised delta
+            deltaAntenna = [dx; dy; dz];
+            deltaAntenna = deltaAntenna ./ vecnorm(deltaAntenna);
+        
+            % Estimated Antenna positions
+            obj.txPos = obj.pos + deltaAntenna * obj.config.distAntenna / 2;
+            obj.rxPos = obj.pos - deltaAntenna * obj.config.distAntenna / 2;
         end
     end
 end
