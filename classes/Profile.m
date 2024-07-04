@@ -777,9 +777,8 @@ classdef Profile < Survey
                 toc
             end
 
-
-            % Allow correcting layer slopes here
-            imgSlopeFiltSAR = medfilt2(imgSlopeSAR, [40,10]);
+            % Filter slopes using median filter
+            imgSlopeFiltSAR = medfilt2(imgSlopeSAR, obj.config.slopeFilterWin);
 
             % Assign slope variables
             obj.imgSlope(:,indSAR) = imgSlopeSAR;

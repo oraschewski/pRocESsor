@@ -72,6 +72,7 @@ classdef ConfigHandler
         slopeMax = 10;       % Slope range boundaries for 'linefit'
         slopeInterval = 0.1; % Slope range interval for 'linefit'
         methodProc                  % Processing method (options are survey specific)
+        slopeFilterWin = [10 10];   % Slope filtering window [bins]
         
         paramSmoothing      % Smoothing parameter
         profileSpacing      % Profile spacing
