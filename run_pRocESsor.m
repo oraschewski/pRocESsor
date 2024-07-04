@@ -39,8 +39,8 @@ imagesc(ProfileSurvey.profileDist, ProfileSurvey.rangeCor, 20*log10(abs(ProfileS
 xlabel('Distance (m)')
 ylabel('Depth (m)')
 axis equal
-%xlim([0, 165.1])
-%ylim([0, 100])
+xlim([min(ProfileSurvey.profileDist), max(ProfileSurvey.profileDist)])
+ylim([min(ProfileSurvey.rangeCor), max(ProfileSurvey.rangeCor)])
 cb = colorbar;
 cb.Label.String = 'Power (dB)';
 colormap(gray)
