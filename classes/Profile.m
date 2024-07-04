@@ -715,7 +715,7 @@ classdef Profile < Survey
                 irDist = irDist(idxSort);
                 irIndOrg = irIndOrg(idxSort);
                 
-                testSlopes = -cfg.slopeMax:cfg.slopeInterval:cfg.slopeMax;
+                testSlopes = -obj.config.slopeMax:obj.config.slopeInterval:obj.config.slopeMax;
 
                 for n = 1:traceLen
                 % parfor n = 1:traceLen % Use parallel computing to speed up code
