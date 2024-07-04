@@ -259,9 +259,9 @@ classdef Profile < Survey
 
 
         function obj = processSAR(obj)
-            %PROCESSSAR
-            switch lower(obj.config.methodSAR) % Make survey types case insensitive.
                 case 'losar'
+            %PROCESSSAR Execute the selected SAR processing method
+            switch lower(obj.config.methodProc) % Make survey types case insensitive.
                     obj = obj.losar();
                 case 'losar_castelletti'
                     obj = obj.losar();
@@ -272,7 +272,7 @@ classdef Profile < Survey
                 case 'movmean'
                     obj = obj.movmean();
                 otherwise
-                    error(['processSAR: SAR processing method "' obj.config.methodSAR '" is unknown.']);
+                    error(['processSAR: SAR processing method "' obj.config.methodProc '" is unknown.']);
             end
         end
 
@@ -380,7 +380,7 @@ classdef Profile < Survey
                     distInRange = distInRange(idxSort);
                     indOrgInRange = indOrgInRange(idxSort);
     
-                    if strcmpi(obj.config.methodSAR, 'losar')
+                    if strcmpi(obj.config.methodProc, 'losar')
                         for n = nRange
                             % Perform operations on smaller window to increase performance.
                             isRange = [max([1,n-40]), min([obj.profileSize(k,1),n+40])]; % Vertical range for small image

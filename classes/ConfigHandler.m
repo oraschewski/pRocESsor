@@ -65,13 +65,13 @@ classdef ConfigHandler
         matchShape = false      % Flag indicating usage of signal matching
         
         % Survey type specific settings
-        methodSAR           % SAR method
         lengthSAR           % SAR length
         methodPos           % Positioning method
         methodSlope = 'linefit'; % Slope method
         filterSlopes = true  % Flag indicating usage of slope filtering
         slopeMax = 10;       % Slope range boundaries for 'linefit'
         slopeInterval = 0.1; % Slope range interval for 'linefit'
+        methodProc                  % Processing method (options are survey specific)
         
         paramSmoothing      % Smoothing parameter
         profileSpacing      % Profile spacing
