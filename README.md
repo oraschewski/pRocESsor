@@ -10,7 +10,7 @@ The processing method is detailed in:
 **Author:**  
 Falk Oraschewski  
 University of Tübingen  
-03.07.2024
+04.07.2024
 
 The ApRES was developed by the British Antarctic Survey (BAS) and the University College London (UCL). 
 
