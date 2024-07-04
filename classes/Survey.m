@@ -67,7 +67,7 @@ classdef Survey
     end
     
     properties(Constant)
-       version = 0.1;
+       version = 1.0;
     end
 
     methods (Static)
