@@ -5,7 +5,7 @@
 pRocESsor was developed to handle profiling data acquired with a mobilized Autonomous phase-sensitive Radio Echo Sounder (ApRES), in the following referred to as mobile pRES. Currently, the main application of pRocESsor is to improve the imaging of englacial stratigraphy recorded with a mobile pRES using Layer-optimized SAR processing. pRocESsor is implemented with a modular approach, enabling to include other applications and acquisition methods of the ApRES.
 
 The processing method is detailed in:  
-  Oraschewski et al. (2024) Layer-optimized SAR processing with a mobile phase-sensitive radar: a proof of concept for detecting the deep englacial stratigraphy of Colle Gnifetti, Switzerland/Italy. The Cryosphere.
+  Oraschewski et al. (2024) Layer-optimized SAR processing with a mobile phase-sensitive radar: a proof of concept for detecting the deep englacial stratigraphy of Colle Gnifetti, Switzerland/Italy. The Cryosphere [preprint: https://doi.org/10.5194/egusphere-2023-2731].
 
 **Author:**  
 Falk Oraschewski  
