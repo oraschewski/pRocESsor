@@ -12,6 +12,7 @@ classdef Survey
         % Surve type
         type string
 
+        % Data Properties 
         range double
         rangeCor double
         twtt double
@@ -50,14 +51,17 @@ classdef Survey
         ci double
         lambdaC double
         padding double = 2;
-
-        numFiles uint16
-        fileName string
-
+        
+        % Radar setup
         cableTx double = NaN;
         cableRx double = NaN;
         distAntenna double = NaN;
 
+        % File properties
+        numFiles uint16
+        fileName string
+        
+        % Metadata
         flags = [];
         config
     end

@@ -10,31 +10,29 @@ classdef Profile < Survey
     %   Switzerland/Italy. The Cryosphere.
 
     properties
+        % Profile domain and positioning
+        profilePos double
+        profileDist
+        profileSize double
+        profileLine double
+        profileSpacing double
         distFit double
+        dist
+        lineNumber
         txPos double
         rxPos double
 
-        profilePos double
-        profileDist
-        profileLine double
-        profileSize double
-
-        imgSlope double
-        imgSlopeFiltered double
-
-        dist
-        lineNumber
-
+        % Data variables
         imgProc double
         imgProcIncoherent double
-
-        profileSpacing double
+        imgSlope double
+        imgSlopeFiltered double
     end
 
 
     methods
         function obj = Profile(config)
-            % PROFILE: Constructor for Profile class which is a subclass
+            % PROFILE Constructor for Profile class which is a subclass
             % of the Survey class
             %   This method creates the Profile object, by taking the base
             %   class properties from the Survey class. This gives the
@@ -45,6 +43,7 @@ classdef Profile < Survey
             % Include lineNumber property
             obj.lineNumber = ones([1, obj.numFiles]);
         end
+        
         
         function obj = processProfile(obj,config)
             %PROCESSPROFILE runs the profile processing as set in the
@@ -58,7 +57,7 @@ classdef Profile < Survey
             % General survey processing
             obj = obj.processSurvey(config);
 
-            % Estimate antenna position
+            % Estimate antenna position (Currently, this has no effect)
             if config.useAntennaPos
                 obj = obj.estimateAntennaPos();
             end
@@ -68,7 +67,7 @@ classdef Profile < Survey
                 obj = obj.obtainLines();
             end
 
-
+            % (Re-)Compute profile position (if not deactivated)
             if config.newPos || ~isfile(config.filePos)
                 obj = obj.positionProfile();
                 PosData.distFit = obj.distFit;
@@ -79,6 +78,7 @@ classdef Profile < Survey
 
                 save(config.filePos, '-struct', 'PosData');
             else
+                % Or load existing position data
                 PosData = load(config.filePos);
                 obj.distFit = PosData.distFit;
                 obj.profilePos = PosData.profilePos;
@@ -87,11 +87,12 @@ classdef Profile < Survey
                 obj.profileDist = PosData.profileDist;
             end
 
-
+            % (Re-)run processing
             if config.newProc || ~isfile(config.fileProc)
                 obj = obj.processSAR();
                 obj.saveSurvey(config.fileProc)
             else
+                % Or load existing processed data
                 obj = obj.loadSurvey(config.fileProc);
             end
         end
@@ -138,12 +139,18 @@ classdef Profile < Survey
 
         function obj = obtainLines(obj)
             %OBTAINLINES obtains linenumbers as defined in config file.
-            
+            %
+            % This function allows to handle several lines in the radar
+            % data seperately
+
+            % Number of lines
             nLines = numel(obj.config.numLines);
 
+            % Indices associated with lines
             inds = [obj.config.indLines{:}];
             obj.numFiles = numel(inds);
             
+            % Cut data outside lines
             vars = {'spec', 'specCor', 'lat', 'lon', 'x', 'y', 'elev', ...
                 'pos', 'distGPS', 'nSubBursts', 'nAttenuators', ...
                 'attenuator1', 'afGain', 'txAnt', 'rxAnt', 'temp1', ...
@@ -153,7 +160,7 @@ classdef Profile < Survey
             for m = 1:numel(vars)
                 var = vars{m};
                 try %#ok<TRYNC> 
-                    obj.(var)       = obj.(var)(:,inds);
+                    obj.(var) = obj.(var)(:,inds);
                 end
             end
 
@@ -168,14 +175,15 @@ classdef Profile < Survey
 
 
         function obj = positionProfile(obj)
-            %POSITIONPROFILE Summary of this function goes here
-            %   Detailed explanation goes here
-            
-            % Update Coordinate system
+            %POSITIONPROFILE Compute position for processed profile
+                        
+            % Update Coordinate system (in case the EPSG was changed in
+            % config without reprocessing the positioning)
             proj = projcrs(obj.config.surveyEPSG);
             [obj.x, obj.y] = projfwd(proj, obj.lat, obj.lon);
             obj.pos = [obj.x; obj.y; obj.elev];
 
+            % Compute position
             switch lower(obj.config.methodPos) % Make survey types case insensitive.
                 case 'org'
                     obj.profilePos = obj.pos;
@@ -204,7 +212,7 @@ classdef Profile < Survey
                         end
                         
                         % Run spline interpolation
-                        f = fit(lnPosOrg(dir1,:)',lnPosOrg(dir2,:)','smoothingspline','SmoothingParam',obj.config.paramSmoothing);
+                        f = fit(lnPosOrg(dir1,:)',lnPosOrg(dir2,:)','smoothingspline','SmoothingParam',obj.config.posSmoothing);
                         
                         % Create fine spaced array along the interpolated
                         % smoothed profile
@@ -255,19 +263,22 @@ classdef Profile < Survey
                 otherwise
                     error(['positionProfile: positioning method "' obj.config.methodPos '" is unknown.']);
             end
+
+            flag = {['positionProfile: positioning method "' obj.config.methodPos '".']};
+            obj.flags = [obj.flags flag];
+            disp([flag{1} newline])
         end
 
 
         function obj = processSAR(obj)
-                case 'losar'
             %PROCESSSAR Execute the selected SAR processing method
             switch lower(obj.config.methodProc) % Make survey types case insensitive.
+                case {'losar', 'losar_castelletti'}
                     obj = obj.losar();
-                case 'losar_castelletti'
-                    obj = obj.losar();
-                case 'backprojection'
-                    obj = obj.backprojection();
-                case 'interpolation'
+                % case 'backprojection' % Excluded for v1.0, testing
+                % required.
+                %    obj = obj.backprojection();
+                case {'interpolation', 'interp'}
                     obj = obj.interpolation();
                 case 'movmean'
                     obj = obj.movmean();
@@ -278,10 +289,10 @@ classdef Profile < Survey
 
 
         function obj = losar(obj)
-            %LOSAR Summary of this function goes here
-            %   Detailed explanation goes here
-            
-            disp('Profile processing method: Layer optimized SAR')
+            %LOSAR Executes Layer-optimized SAR processing
+            flag = {'Profile processing method: layer-optimized SAR'};
+            obj.flags = [obj.flags flag];
+            disp([flag{1} newline])
             
             % Create empty matrizies for processed images
             obj.imgProc = zeros([obj.profileSize(1,1) sum(obj.profileSize(:,2))]);
@@ -307,8 +318,7 @@ classdef Profile < Survey
                             obj = obj.slopeCompute(k);
                         case 'linefit'
                             obj = obj.slopeLineFitting(k);
-                        case 'radon'
-                            %ToDo: Include finding the slope using the radon transform
+                        %case 'radon' Excluded for v1.0, testing required.
                         otherwise
                             error(['losar: Slope finding method "' obj.config.methodSlope '" is unknown.']);
                     end
@@ -345,7 +355,7 @@ classdef Profile < Survey
                 imgSAR = zeros(obj.profileSize(k,:));
                 imgSARIncoherent = zeros(obj.profileSize(k,:));
 
-
+                % Process profile point by point
                 nRange = 1:obj.profileSize(k,1);
                 mRange = 1:obj.profileSize(k,2);
 
@@ -417,10 +427,23 @@ classdef Profile < Survey
                             % results.
                             imgNumPoints = sum([ratioFl, ratioCe]);
         
-                            imgSAR(n,m) = max(imgPower)./imgNumPoints;
-                            imgSARIncoherent(n,m) = max(imgPowerIncoherent)./imgNumPoints;
+                            imgSAR(n,m) = imgPower./imgNumPoints;
+                            imgSARIncoherent(n,m) = imgPowerIncoherent./imgNumPoints;
                         end
-                    else
+                    elseif strcmpi(obj.config.methodProc, 'losar_castelletti')
+                        % This method approximates the LO-SAR
+                        % implementation as presented by
+                        % Castelletti et al. (2019) Layer optimized SAR
+                        % processing and slope estimation in radar sounder
+                        % data. J. Glaciol. 65, 983–988.
+                        % https://doi.org/10.1017/jog.2019.72
+                        %
+                        % This method was only implemented for comparision
+                        % and does not recompute the slopes by maximizing
+                        % the SNR after the phase correction, but takes the
+                        % slopes estimated with our LO-SAR approach and
+                        % performs the coherent summation along range bins.
+
                         % Extract data in range                        
                         BinInRange = imgOrg(:, indOrgInRange);
     
@@ -455,7 +478,6 @@ classdef Profile < Survey
         function obj = interpolation(obj)
             %INTERPOLATION assigns to each profile position the data value of
             %the nearest recorded data point.
-            %   Detailed explanation goes here
             %
             % Falk Oraschewski, 19.10.2022
             
@@ -782,7 +804,8 @@ classdef Profile < Survey
                     imgSlopeSAR(n,m) = slope;
                 end
 
-                % Intermediate saving
+                % Intermediate saving (manual interaction with code needed
+                % to recover only partially estimated slopes).
                 nSave = nSave + 1;                
                 if nSave == 100
                     obj.imgSlope(:,indSAR) = imgSlopeSAR;
@@ -797,20 +820,22 @@ classdef Profile < Survey
             % Allow correcting layer slopes here
             imgSlopeFiltSAR = medfilt2(imgSlopeSAR, [40,10]);
 
+            % Assign slope variables
             obj.imgSlope(:,indSAR) = imgSlopeSAR;
             obj.imgSlopeFiltered(:,indSAR) = imgSlopeFiltSAR;
 
-            figure()
-            imagesc(obj.imgSlope)
-            colorbar()
-            colormap(redblue)
-            clim([-30 30])
-
-            figure()
-            imagesc(obj.imgSlopeFiltered)
-            colorbar()
-            colormap(redblue)
-            clim([-30 30])
+            % Intermediate plots for testing
+            % figure()
+            % imagesc(obj.imgSlope)
+            % colorbar()
+            % colormap(redblue)
+            % clim([-30 30])
+            % 
+            % figure()
+            % imagesc(obj.imgSlopeFiltered)
+            % colorbar()
+            % colormap(redblue)
+            % clim([-30 30])
         end
 
 

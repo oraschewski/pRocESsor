@@ -84,7 +84,7 @@ classdef ConfigHandler
     
     methods
         function obj = ConfigHandler(configFile)
-            % CONFIGHANDLER: Constructor for ConfigHandler class.
+            % CONFIGHANDLER Constructor for ConfigHandler class.
             %   Initializes the ConfigHandler object using the provided
             %   configuration file.
             %
@@ -118,9 +118,12 @@ classdef ConfigHandler
 
     methods (Access = private)
         function obj = obtainFullfiles(obj)
-            % OBTAINFULLFILES: Obtains absolute file paths for directories and files.
-            %   Updates directory and file properties to contain absolute
-            %   paths based on the project directory.
+            % OBTAINFULLFILES Obtain absolute file paths for configHandler
+            %
+            % Description:
+            %   For directiory and file properties in the configHandler 
+            %   object, absolute paths are obtained based on the root
+            %   directory of the project.
             
             % Check if the project directory exists and ensure it is an absolute path
             if exist(obj.dirProject, 'dir') == 7
@@ -129,8 +132,8 @@ classdef ConfigHandler
                 % If the directory does not exist, assume obj.dirProject is
                 % a relative path from a general data folder set by a
                 % system variable 'dirData'.
-                % Note, Falk: This is an approach that I use to access data
-                % in my local root data directory.
+                % Note from Falk: I use this to access data in my local
+                % root data directory.
                 obj.dirProject = fullfile(dirData, obj.dirProject);
             end
 
