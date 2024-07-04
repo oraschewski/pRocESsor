@@ -1,7 +1,6 @@
 function [yIndFl,yIndCe,ratioFl,ratioCe,yFlInRange,yCeInRange] = getFloorCeil(y, yMax)
     %GETFLOORCEIL find indices above and belove for an index array that
     %does not only contain integers.
-    %   Detailed explanation goes here
 
     % Find indices above and below y
     yIndFl = floor(y);
